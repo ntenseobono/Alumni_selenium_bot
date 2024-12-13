@@ -1,0 +1,106 @@
+[
+    {
+        "name": "wordpress_sec_2909fed3ec4894e3dcdf70af9ea68ab8",
+        "value": "obonon%7C1733949489%7CUXhFd6XEwsSsh32el65CpEiDIV76c6KHG39jElsUPcz%7C818a417b9cd93d4cb7ea3efb73633cf861648ffcfdcbe77d1faf1c308090f983",
+        "domain": "www.carleton.edu",
+        "path": "/wp-content/plugins",
+        "secure": true,
+        "httpOnly": true
+    },
+    {
+        "name": "JSESSIONID",
+        "value": "node019c0kuxyjb5fg4v8iksbecr0t525357.node0",
+        "domain": "login.carleton.edu",
+        "path": "/idp",
+        "secure": true,
+        "httpOnly": true
+    },
+    {
+        "name": "shib_idp_session",
+        "value": "af7d9ab205e61ee168b782300ecb26d331beeb9a3120274f44cbfaec0747f951",
+        "domain": "login.carleton.edu",
+        "path": "/idp",
+        "secure": true,
+        "httpOnly": true
+    },
+    {
+        "name": "SERVER",
+        "value": "ssl3",
+        "domain": "moodle.carleton.edu",
+        "path": "/",
+        "secure": false,
+        "httpOnly": false
+    },
+    {
+        "name": "mautic_device_id",
+        "value": "qpsk25a18lggcoiomf6p8fk",
+        "domain": "go.apply.carleton.edu",
+        "path": "/",
+        "secure": true,
+        "httpOnly": false
+    },
+    {
+        "name": "mtc_id",
+        "value": "1245457",
+        "domain": "go.apply.carleton.edu",
+        "path": "/",
+        "secure": true,
+        "httpOnly": false
+    },
+    {
+        "name": "mtc_sid",
+        "value": "qpsk25a18lggcoiomf6p8fk",
+        "domain": "go.apply.carleton.edu",
+        "path": "/",
+        "secure": true,
+        "httpOnly": false
+    },
+    {
+        "name": "mtc_id",
+        "value": "1245457",
+        "domain": "www.carleton.edu",
+        "path": "/",
+        "secure": true,
+        "httpOnly": false
+    },
+    {
+        "name": "mtc_sid",
+        "value": "qpsk25a18lggcoiomf6p8fk",
+        "domain": "www.carleton.edu",
+        "path": "/",
+        "secure": true,
+        "httpOnly": false
+    },
+    {
+        "name": "wordpress_test_cookie",
+        "value": "WP%20Cookie%20check",
+        "domain": "www.carleton.edu",
+        "path": "/",
+        "secure": true,
+        "httpOnly": false
+    },
+    {
+        "name": "wordpress_google_apps_login",
+        "value": "f5380b1d949d07fa8456aa2d1f54ee7d",
+        "domain": "www.carleton.edu",
+        "path": "/",
+        "secure": true,
+        "httpOnly": false
+    },
+    {
+        "name": "PHPSESSID",
+        "value": "3h7oqq5ea091j7vbecb7laf9id",
+        "domain": "www.carleton.edu",
+        "path": "/",
+        "secure": false,
+        "httpOnly": false
+    },
+    {
+        "name": "wordpress_logged_in_2909fed3ec4894e3dcdf70af9ea68ab8",
+        "value": "obonon%7C1733949489%7CUXhFd6XEwsSsh32el65CpEiDIV76c6KHG39jElsUPcz%7C1856073e73212676884e6239f8ab78404f957e89a3e3984cccacbfc89cffe7cd",
+        "domain": "www.carleton.edu",
+        "path": "/",
+        "secure": true,
+        "httpOnly": true
+    }
+]
