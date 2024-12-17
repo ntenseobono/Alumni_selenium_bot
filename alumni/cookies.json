@@ -1,26 +1,3 @@
 [
-    {
-      "name": "mtc_id",
-      "value": "1245457"
-    },
-    {
-      "name": "mtc_sid",
-      "value": "qpsk25a18lggcoiomf6p8fk"
-    },
-    {
-      "name": "mautic_device_id",
-      "value": "qpsk25a18lggcoiomf6p8fk"
-    },
-    {
-      "name": "wordpress_test_cookie",
-      "value": "WP%20Cookie%20check"
-    },
-    {
-      "name": "wordpress_google_apps_login",
-      "value": "f5380b1d949d07fa8456aa2d1f54ee7d"
-    },
-    {
-      "name": "PHPSESSID",
-      "value": "3h7oqq5ea091j7vbecb7laf9id"
-    }
+
   ]
