@@ -15,108 +15,6 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-sent_last_year = set([
-    "eve.fillenbaum@gmail.com",
-    "grcote@gmail.com",
-    "gerard.cote@oracle.com",
-    "holdengreenberg@gmail.com",
-    "gretchenkhall@gmail.com",
-    "janeakelly95@gmail.com",
-    "grant@swanjord.com",
-    "keelerkb@gmail.com",
-    "randy_smith@rdscg.com",
-    "sophierouhandeh@gmail.com",
-    "boycem00@gmail.com",
-    "bhschuster@gmail.com",
-    "lydia.auner@gmail.com",
-    "natbeagley@gmail.com",
-    "joanna_valliere@rocketmail.com",
-    "concretecowboy@gmail.com",
-    "ek.lagerquist@gmail.com",
-    "sicelomasango@gmail.com",
-    "rvsantacruz@gmail.com",
-    "diane24601@gmail.com",
-    "appachar.ar@gmail.com",
-    "michael.e.a.habermann@gmail.com",
-    "grace.a.e.moret@gmail.com",
-    "hilarygt@gmail.com",
-    "boycem00@gmail.com",
-    "lmdownie1125@gmail.com",
-    "downielm@gmail.com",
-    "turnerdj32@gmail.com",
-    "holdengreenberg@gmail.com",
-    "eric.shin75@gmail.com",
-    "eric.k.shin@pwc.com",
-    "apspringborn@hotmail.com",
-    "lara.livgard@mac.com",
-    "fjennier@gmail.com",
-    "terence.winsky@gmail.com",
-    "gautam.khera@gmail.com",
-    "harrisrachelanna@gmail.com",
-    "linkedln",
-    "annette.kurtz@hp.com",
-    "nwyale@icloud.com",
-    "goodgec@gmail.com",
-    "colehanson42@gmail.com",
-    "akral97@gmail.com",
-    "kale.zicafoose@gmail.com",
-    "egcarlson57@gmail.com",
-    "brandyscholwinski@gmail.com",
-    "sinhaamartya@gmail.com",
-    "emily.noneman@gmail.com",
-    "diane24601@gmail.com",
-    "nivenmarie@gmail.com",
-    "jmknopf@yahoo.com",
-    "ricardo.v.santa.cruz@intel.com",
-    "lrbell404@hotmail.com",
-    "sam.ne.carruthers@gmail.com",
-    "jvanvaler@yahoo.com",
-    "jimmy.v.ly@gmail.com",
-    "tedhickey545@gmail.com",
-    "tatebosler@gmail.com",
-    "campbellinfulleffect@gmail.com",
-    "jka42@hotmail.com",
-    "tim.munson@gmail.com",
-    "kesterelli@gmail.com",
-    "williams.megan88@gmail.com",
-    "gordodki@gmail.com",
-    "siobhan@mcmahon-holland.com",
-    "davidchesebro@gmail.com",
-    "choirofdream@gmail.com",
-    "sansone1979@gmail.com",
-    "havenil@aol.com",
-    "davidechurch@gmail.com",
-    "tyler.m.young@gmail.com",
-    "scpeng@gmail.com",
-    "escolad@gmail.com",
-    "akuhn649@gmail.com",
-    "michael.yurinich@gmail.com",
-    "lucy.b.albin@gmail.com",
-    "imaniritchards@gmail.com",
-    "rachelosofsky@gmail.com"
-])
-
-YOUR_EMAIL = "obonon@carleton.edu"
-YOUR_PASSWORD = "opte zucg bdky revh"
-
-HEADER = "Ntense Obono 2025' Carleton College Alumni Introduction and Networking."
-BODY_TEMPLATE = """
-Hi {alumni_name},
-
-My name is Ntense Obono, and I am currently a senior Computer Science major with a concentration in economics and mathematics at Carleton College.
-
-I recently came across your LinkedIn profile and received your information from the alumni directory and noticed that your career path is quite similar to what I would like to pursue. As an individual who would like to break into the world of technology and finance, I would love just 20 minutes of your time to learn about your experience and what you do at {company} on a daily basis and what it's like to work in the field.
-
-I am also interested in the entry-level Software Engineering position offered at {company}. I believe that my background can make me a great fit for the firm.
-
-I have attached my resume just so you have a frame of reference for my education and experiences.
-
-I look forward to hearing from you!
-
-Sincerely,
-Ntense
-"""
-
 def setup_driver():
     """Set up and return the Selenium WebDriver."""
     options = Options()
@@ -136,22 +34,22 @@ def setup_driver():
 
 def send_email(to_email, alumni_name, company):
     try:
-        # # Set up the email
-        # msg = MIMEMultipart()
-        # msg['From'] = YOUR_EMAIL
-        # msg['To'] = "wearsnext@gmail.com"
-        # msg['Subject'] = HEADER
+        # Set up the email
+        msg = MIMEMultipart()
+        msg['From'] = YOUR_EMAIL
+        msg['To'] = ""
+        msg['Subject'] = HEADER
 
-        # # Personalize the body
-        # body = BODY_TEMPLATE.format(alumni_name=alumni_name, company=company)
-        # msg.attach(MIMEText(body, 'plain'))
+        # Personalize the body
+        body = BODY_TEMPLATE.format(alumni_name=alumni_name, company=company)
+        msg.attach(MIMEText(body, 'plain'))
 
-        # # Connect to Gmail and send the email
-        # server = smtplib.SMTP('smtp.gmail.com', 587)
-        # server.starttls()
-        # server.login(YOUR_EMAIL, YOUR_PASSWORD)
-        # server.send_message(msg)
-        # server.quit()
+        # Connect to Gmail and send the email
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(YOUR_EMAIL, YOUR_PASSWORD)
+        server.send_message(msg)
+        server.quit()
 
         print(f"Email sent to {alumni_name} ({to_email})")
     except Exception as e:
