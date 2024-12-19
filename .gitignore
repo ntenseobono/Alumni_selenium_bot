@@ -1,3 +1,5 @@
-alumni
+alumni/*
+!alumni/alumni.py
 linkedin_cookies.json
-/deprecated
+deprecated
+utils
