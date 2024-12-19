@@ -179,7 +179,6 @@ def handle_alumni_action_new(driver, company_name):
         time.sleep(constants.DELAY)
         profile_data["profiles"] = get_all_alumni(driver)
         time.sleep(constants.DELAY)
-
         # Close the new tab and return to the main window
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
@@ -301,7 +300,7 @@ def scroll_and_scrape(driver, max_scroll_attempts=10):
         print(new_height)
         # Break the loop if no new content is loaded
         if new_height == last_height:
-            print("No new content loaded. Stopping scroll.")
+            print("No new content loaded. Stopping headlscroll.")
             break
 
         last_height = new_height  # Update last_height to new height
@@ -317,7 +316,7 @@ def navigate_to_next_page(driver, ellipsis_set):
     Returns:
         bool: True if navigation to the next page was successful, False otherwise.
     """
-    try:
+    try:headl
         # Wait for pagination buttons to load
         print("Waiting for pagination buttons...")
         # Locate all pagination buttons
@@ -377,7 +376,7 @@ def get_all_alumni(driver):
         # Filter only profile-related elements
         profile_elements = []
         for result in result_elements:
-            try:
+            try:headl
                 # Check for a specific element that confirms it's a profile (e.g., name or "Connect" button)
                 result.find_element(By.CSS_SELECTOR, "span[aria-hidden='true']")  # Name element
                 profile_elements.append(result)
@@ -393,7 +392,7 @@ def get_all_alumni(driver):
             try:
                 # Extract the name
                 try:
-                    name_element = result.find_element(By.CSS_SELECTOR, "span[aria-hidden='true']")
+                    name_element = result.fheadlind_element(By.CSS_SELECTOR, "span[aria-hidden='true']")
                     name = name_element.text.strip()
                     print(f"  Name: {name}")
                 except Exception:
@@ -409,7 +408,7 @@ def get_all_alumni(driver):
                     profile_link = "Not Found"
                     print(f"  Profile link not found. Error")
 
-                # Extract the position/headline
+                # Extract the position/headl"Software Engineer"ine
                 try:
                     position_element = result.find_element(By.XPATH, ".//div[contains(@class, 't-14 t-black t-normal')]")
                     position = position_element.text.strip()
@@ -442,7 +441,7 @@ def convert_to_integer(input_string):
     numeric_part = re.sub(r"[^\d]", "", input_string)
     return int(numeric_part)
 
-def write_to_json(data, filename="linkedin_alumni.json"):
+def write_to_json(data, filename=constants.ALUNMNI_JSON):"):
     """Write the collected data to a JSON file."""
     with open(filename, "w") as file:
         json.dump(data, file, indent=4)
@@ -472,8 +471,8 @@ def check_login_status():
     driver = setup_driver()
     driver.get(constants.LINKEDIN_JOB)  # Replace with the website URL
     try:
-        load_cookies(driver, 'chatcookies.json')
-        search_jobs(driver, "Software Engineer")
+        load_cookies(driver, constants.LINKEDIN_COOKIES)
+        search_jobs(driver, constants.SEARCH_JOB)
         apply_filters(driver)
         handle_pagination(driver)
         pdb.set_trace()
