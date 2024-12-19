@@ -10,10 +10,36 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from templates import body_template
 
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
+
+SENT_EMAILS_FILE = 'sent_emails.json'
+ALUMNI_INFO = 'manual_alumni.json'
+if os.path.exists(SENT_EMAILS_FILE):
+    with open(SENT_EMAILS_FILE, 'r') as f:
+        sent_last_year = set(json.load(f))
+else:
+    sent_last_year = set()
+
+
+PDF_FILE_PATH = 'Ntense_Obono_resume.pdf'
+
+YOUR_EMAIL = "obonon@carleton.edu"
+YOUR_PASSWORD = "opte zucg bdky revh"
+
+HEADER = "Ntense Obono 2025' Carleton College Alumni Introduction and Networking"
+
+KEYWORDS = ["computer science", "information science", "tech","economics", "mathematics", "statistics", "physics", "biology", "engineering", "developer", "development", "recruiter", "manager", "swe", "sde", "software"]
+
+def contains_major_keywords(major_text):
+    """Check if the major contains any of the defined keywords."""
+    major_text = major_text.lower()  # Normalize the text to lowercase
+    return any(re.search(rf"\b{keyword}\b", major_text) for keyword in KEYWORDS)
 
 def setup_driver():
     """Set up and return the Selenium WebDriver."""
@@ -30,20 +56,37 @@ def setup_driver():
     return webdriver.Chrome(options=options)
 
 
+def save_sent_emails():
+    with open(SENT_EMAILS_FILE, 'w') as f:
+        json.dump(list(sent_last_year), f, indent=4)
 
-
-def send_email(to_email, alumni_name, company):
+def send_email(to_email, alumni_name, company, major, position):
     try:
         # Set up the email
         msg = MIMEMultipart()
         msg['From'] = YOUR_EMAIL
-        msg['To'] = ""
+        msg['To'] = "drewmeyer28@gmail.com"
         msg['Subject'] = HEADER
 
         # Personalize the body
-        body = BODY_TEMPLATE.format(alumni_name=alumni_name, company=company)
+        if contains_major_keywords(major) or contains_major_keywords(position):
+            if contains_major_keywords(major):
+                print(f"Match found in major: {major}")
+            if contains_major_keywords(position):
+                print(f"Match found in position: {position}")
+            body = body_template.SAME_CAREER_PATH_SAME_MAJORS.format(alumni_name=alumni_name, company=company)
+        else:
+            print("No match found in major or position.")
+            body = body_template.DIFFERENT_CAREER_PATH_DIFFERENT_MAJORS.format(alumni_name=alumni_name, company=company)
         msg.attach(MIMEText(body, 'plain'))
 
+        with open(PDF_FILE_PATH, "rb") as attachment:
+            part = MIMEBase('application', 'octet-stream')
+            part.set_payload(attachment.read())
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition', f"attachment; filename= {os.path.basename(PDF_FILE_PATH)}")
+            msg.attach(part)
+        
         # Connect to Gmail and send the email
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
@@ -52,6 +95,8 @@ def send_email(to_email, alumni_name, company):
         server.quit()
 
         print(f"Email sent to {alumni_name} ({to_email})")
+        sent_last_year.add(to_email) 
+        save_sent_emails()
     except Exception as e:
         print(f"Failed to send email to {to_email}: {e}")
 
@@ -79,7 +124,7 @@ def load_cookies(driver, cookies_file):
 driver = setup_driver()
 driver.get("https://www.carleton.edu/alumni/directory/")  # Replace with the website URL
 base_url = "https://www.carleton.edu/alumni/directory/?fullName="
-with open('alumni.json', 'r') as f:
+with open(ALUMNI_INFO, 'r') as f:
     data = json.load(f)
 
 load_cookies(driver, 'chatcookies.json')
@@ -92,9 +137,11 @@ base_url = "https://www.carleton.edu/alumni/directory/?fullName="
 # Iterate through each company and their alumni
 for company in data['jobs']:
     company_name = company['company_name']
+    
 
     for alumni in company['alumni']:
         full_name = alumni['name'].replace(" ", "%20")
+        position = alumni['position']
         search_url = f"{base_url}{full_name}"
         
         # Navigate to the search page
@@ -124,7 +171,7 @@ for company in data['jobs']:
                         alumni['email_status'] = "Follow up"
                         print(f"Follow up on {name} at {email}")
                     else:
-                        send_email(email, name.split()[0], company_name)
+                        send_email(email, name.split()[0], company_name, major, position)
                         alumni['email_status'] = "Sent"
                     break  # Stop searching once a match is found
                 else:
@@ -144,7 +191,3 @@ driver.quit()
 
 
 
-
-
-
-# Continue with the automation

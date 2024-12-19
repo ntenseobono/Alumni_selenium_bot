@@ -12,7 +12,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from utils import constants
 
-
+found_jobs = set()
 def setup_driver():
     """Set up and return the Selenium WebDriver."""
     options = Options()
@@ -44,7 +44,6 @@ def login_to_linkedin(driver):
 
 def search_jobs(driver, job_title):
     """Search for jobs on LinkedIn."""
-    driver.get(constants.LINKEDIN_JOB)
     time.sleep(constants.DELAY)
 
     try:
@@ -112,12 +111,25 @@ def scrape_jobs(driver):
     except Exception as e:
         print(f"Error scraping jobs: {e}")
     
+def handle_pagination(driver):
+    """
+    Handle job postings pagination by processing each page and navigating to the next one.
+    """
+    ellipsis_set = set()  # To track non-numeric pagination buttons (e.g., "...")
+    results_list = []
+    while True:
+        process_current_page(driver, results_list)  # Process jobs on the current page
+        if not navigate_to_next_page(driver, ellipsis_set):  # Try navigating to the next page
+            break  # Exit loop if no next page is available
+    write_to_json(results_list)
 
 def process_job(driver, job, index, results_list):
     """Process a single job posting."""
+    global found_jobs
     try:
         print(job.text)
         alumni_text_element = job.find_element(By.CLASS_NAME, "job-card-container__job-insight-text")
+        company_name = job.find_element(By.CLASS_NAME, "artdeco-entity-lockup__subtitle").text
         # if 1 < 0:
         if any(
             phrase in alumni_text_element.text
@@ -127,15 +139,57 @@ def process_job(driver, job, index, results_list):
                 "connection works here",
                 "school alum work here",
             )
-        ):
+        ) and company_name not in found_jobs:
             print(f"Job #{index + 1}: Found alumni information.")
-            profile_data = handle_alumni_action(driver, alumni_text_element)
+            found_jobs.add(company_name)
+            profile_data = handle_alumni_action_new(driver, company_name)
             if profile_data:
                 results_list.append(profile_data)
         else:
             print(f"Job #{index + 1}: No alumni information")
     except Exception as e:
         print(f"Error processing job #{index + 1}: {e}")
+
+def handle_alumni_action_new(driver, company_name):
+    try:
+        url ="https://www.linkedin.com/search/results/all/"
+        driver.execute_script("window.open(arguments[0], '_blank');", url)
+        driver.switch_to.window(driver.window_handles[-1])
+        time.sleep(constants.DELAY)
+        
+        search_input = driver.find_element(By.XPATH, "/html/body/div[5]/header/div/div/div/div[1]/input")
+        search_input.click()
+        search_input.send_keys(company_name)
+        search_input.send_keys(Keys.RETURN)
+
+        profile_data = {
+            "company_name": company_name,
+            "profiles": []
+        }
+
+        print("Trying to click") 
+        possible_alumni = driver.find_element(By.CSS_SELECTOR, ".reusable-search-simple-insight__text-container")
+        possible_alumni.click()
+        print("Clicked the possibles")
+        time.sleep(constants.DELAY)
+
+        current_url = driver.current_url
+        modified_url = modify_link(current_url)
+        driver.get(modified_url)
+        time.sleep(constants.DELAY)
+        profile_data["profiles"] = get_all_alumni(driver)
+        time.sleep(constants.DELAY)
+
+        # Close the new tab and return to the main window
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0])
+        return profile_data
+    except:
+        profile_data = {
+            "company_name": company_name,
+            "profiles": None
+        }
+        return profile_data
 
 def handle_alumni_action(driver, alumni_text_element):
     """Handle actions related to alumni information in job postings."""
@@ -228,18 +282,6 @@ def process_current_page(driver, results_list):
     print(f"Found {len(job_listings)} job postings.")
     for index, job in enumerate(job_listings):
         process_job(driver, job, index, results_list)
-
-def handle_pagination(driver):
-    """
-    Handle job postings pagination by processing each page and navigating to the next one.
-    """
-    ellipsis_set = set()  # To track non-numeric pagination buttons (e.g., "...")
-    results_list = []
-    while True:
-        process_current_page(driver, results_list)  # Process jobs on the current page
-        if not navigate_to_next_page(driver, ellipsis_set):  # Try navigating to the next page
-            break  # Exit loop if no next page is available
-    write_to_json(results_list)
 
 def scroll_and_scrape(driver, max_scroll_attempts=10):
     scroll_pause_time = 1  # Pause time between scrolls
@@ -406,11 +448,31 @@ def write_to_json(data, filename="linkedin_alumni.json"):
         json.dump(data, file, indent=4)
     print(f"Data written to {filename}")
 
+def load_cookies(driver, cookies_file):
+    with open(cookies_file, 'r') as f:
+        cookies = json.load(f)
+        for cookie in cookies:
+            # Add cookies only for the correct domain
+            if "carleton.edu" in cookie['domain']:
+                cookie['domain'] = ".carleton.edu"  # Adjust to match subdomains if needed
+                try:
+                    driver.add_cookie({
+                        "name": cookie['name'],
+                        "value": cookie['value'],
+                        "domain": cookie['domain'],
+                        "path": cookie['path'],
+                        "secure": cookie['secure'],
+                        "httpOnly": cookie['httpOnly']
+                    })
+                except Exception as e:
+                    print(f"Error adding cookie {cookie['name']}: {e}")
+
 def check_login_status():
     """Main function to orchestrate the LinkedIn job scraping process."""
     driver = setup_driver()
+    driver.get(constants.LINKEDIN_JOB)  # Replace with the website URL
     try:
-        login_to_linkedin(driver)
+        load_cookies(driver, 'chatcookies.json')
         search_jobs(driver, "Software Engineer")
         apply_filters(driver)
         handle_pagination(driver)
